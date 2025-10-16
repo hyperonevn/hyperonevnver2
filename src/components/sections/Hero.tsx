@@ -4,7 +4,7 @@ export const Hero: React.FC = () => {
   const [ref, isVisible] = useIntersectionObserver();
   return <section className="relative h-screen flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0" style={{
-      backgroundImage: 'url("https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80")',
+      backgroundImage: 'url("https://raw.githubusercontent.com/hyperonevn/hyperonevn/main/vision.png")',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundAttachment: 'fixed',
