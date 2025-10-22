@@ -1,217 +1,174 @@
-import { useEffect, useRef, useState } from "react";
-import "./intro.css";
+:root {
+  --ai-blue: #00aaff;
+  --ai-blue-soft: #aee2ff;
+}
 
-export default function Intro({ onFinish }: { onFinish: () => void }) {
-  const matrixRef = useRef<HTMLCanvasElement>(null);
-  const particlesRef = useRef<HTMLCanvasElement>(null);
-  const meteorsRef = useRef<HTMLCanvasElement>(null);
-  const [logs, setLogs] = useState<string[]>([]);
-  const [active, setActive] = useState(true);
+#intro {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: #000;
+}
 
-  // ===== Setup: Lock scroll when intro starts =====
-  useEffect(() => {
-    document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-  }, []);
-
-  // ===== Matrix Rain =====
-  useEffect(() => {
-    const canvas = matrixRef.current!;
-    const ctx = canvas.getContext("2d")!;
-    const resize = () => {
-      canvas.width = innerWidth;
-      canvas.height = innerHeight;
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    const cols = Math.floor(canvas.width / 14);
-    const ypos = Array(cols).fill(0);
-    let running = true;
-
-    const draw = () => {
-      if (!running) return;
-      ctx.fillStyle = "rgba(0,0,0,0.08)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#00aaff";
-      ctx.font = "14px monospace";
-      for (let i = 0; i < cols; i++) {
-        const t = String.fromCharCode(0x30A0 + Math.random() * 96);
-        ctx.fillText(t, i * 14, ypos[i] * 14);
-        if (ypos[i] * 14 > canvas.height && Math.random() > 0.975) ypos[i] = 0;
-        ypos[i]++;
-      }
-      requestAnimationFrame(draw);
-    };
-    draw();
-
-    return () => {
-      running = false;
-      window.removeEventListener("resize", resize);
-    };
-  }, []);
-
-  // ===== Particle Mist =====
-  useEffect(() => {
-    const canvas = particlesRef.current!;
-    const ctx = canvas.getContext("2d")!;
-    const resize = () => {
-      canvas.width = innerWidth;
-      canvas.height = innerHeight;
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    const parts = Array.from({ length: 70 }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: Math.random() * 2 + 0.5,
-      s: Math.random() * 0.4 + 0.1,
-    }));
-
-    let run = true;
-    const draw = () => {
-      if (!run) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "rgba(0,170,255,0.5)";
-      for (const p of parts) {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
-        ctx.fill();
-        p.y -= p.s;
-        if (p.y < 0) p.y = canvas.height;
-      }
-      requestAnimationFrame(draw);
-    };
-    draw();
-
-    return () => {
-      run = false;
-      window.removeEventListener("resize", resize);
-    };
-  }, []);
-
-  // ===== Meteors =====
-  useEffect(() => {
-    const canvas = meteorsRef.current!;
-    const ctx = canvas.getContext("2d")!;
-    const resize = () => {
-      canvas.width = innerWidth;
-      canvas.height = innerHeight;
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    let meteors: any[] = [];
-    const spawn = () => {
-      meteors.push({
-        x: Math.random() * canvas.width * 0.6,
-        y: Math.random() * canvas.height * 0.35,
-        len: 200 + Math.random() * 240,
-        speed: 12 + Math.random() * 9,
-        ang: (Math.PI / 4) * (0.78 + Math.random() * 0.44),
-        color: ["#00aaff", "#00ffff", "#66ccff", "#ffffff"][
-          Math.floor(Math.random() * 4)
-        ],
-        life: 0,
-      });
-    };
-
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let i = meteors.length - 1; i >= 0; i--) {
-        const m = meteors[i];
-        const dx = Math.cos(m.ang) * m.speed;
-        const dy = Math.sin(m.ang) * m.speed;
-        ctx.strokeStyle = m.color;
-        ctx.lineWidth = 2;
-        ctx.shadowBlur = 18;
-        ctx.shadowColor = m.color;
-        ctx.beginPath();
-        ctx.moveTo(m.x, m.y);
-        ctx.lineTo(
-          m.x - m.len * Math.cos(m.ang),
-          m.y - m.len * Math.sin(m.ang)
-        );
-        ctx.stroke();
-        m.x += dx;
-        m.y += dy;
-        m.life++;
-        if (m.life > 60) meteors.splice(i, 1);
-      }
-      requestAnimationFrame(draw);
-    };
-    draw();
-
-    const interval = setInterval(spawn, 25000);
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener("resize", resize);
-    };
-  }, []);
-
-  // ===== Logs =====
-  useEffect(() => {
-    if (!active) return;
-    const timer = setInterval(() => {
-      const t = new Date().toLocaleTimeString();
-      setLogs((prev) => [
-        `[${t}] CORE::AUTH OK Δt=${(Math.random() * 0.4 + 0.2).toFixed(3)}s`,
-        ...prev.slice(0, 7),
-      ]);
-    }, 900);
-    return () => clearInterval(timer);
-  }, [active]);
-
-  // ===== GO click =====
-  const handleGo = () => {
-    const goSound = new Audio(
-      "https://cdn.pixabay.com/download/audio/2023/03/15/audio_50e1c4c0b0.mp3?filename=ui-confirmation-alert-147389.mp3"
-    );
-    goSound.play();
-    setActive(false);
-
-    // mở scroll lại
-    document.documentElement.style.overflow = "auto";
-    document.body.style.overflow = "auto";
-
-    // Fade out intro
-    setTimeout(onFinish, 900);
-  };
-
-  return (
-    <div id="intro" style={{ opacity: active ? 1 : 0, transition: "opacity 1s" }}>
-      <canvas id="matrix" ref={matrixRef}></canvas>
-      <canvas id="particles" ref={particlesRef}></canvas>
-      <canvas id="meteors" ref={meteorsRef}></canvas>
-      <div id="scan"></div>
-      <div id="flash"></div>
-
-      <div id="terminal">
-        <div id="tagline">
-          “We don’t chase what AI can do — we pursue what AI should do.”
-        </div>
-        <h1 className="logo">
-          <span className="hyper">HYPER</span> <span className="one">ONE</span>
-        </h1>
-        <div id="sub">Vietnam’s Leading AI Innovation Hub</div>
-        <button id="goBtn" onClick={handleGo}>
-          GO
-        </button>
-      </div>
-
-      <div id="logs">
-        {logs.map((l, i) => (
-          <div key={i}>{l}</div>
-        ))}
-      </div>
-
-      <audio
-        id="bgAudio"
-        src="https://cdn.pixabay.com/download/audio/2023/01/03/audio_d57dbe7a34.mp3?filename=futuristic-interface-ambient-126941.mp3"
-        autoPlay
-        loop
-      ></audio>
-    </div>
+/* Layers */
+#matrix,
+#particles,
+#meteors {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+#scan {
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 170, 255, 0.05) 0 2px,
+    transparent 2px 4px
   );
+  animation: scan 5s linear infinite;
+}
+@keyframes scan {
+  from {
+    background-position-y: 0;
+  }
+  to {
+    background-position-y: 100%;
+  }
+}
+
+/* ===== LOGO ===== */
+#terminal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.logo {
+  margin: 0;
+  font-size: 4.8rem;
+  letter-spacing: 6px;
+  position: relative;
+  text-shadow: 0 0 30px var(--ai-blue), 0 0 60px #0077ff, 0 0 100px #00ffff80;
+  animation: logoGlow 5s ease-in-out infinite alternate;
+}
+@keyframes logoGlow {
+  0% {
+    filter: brightness(0.9);
+    text-shadow: 0 0 25px #0088ff, 0 0 40px #00ffff60;
+  }
+  100% {
+    filter: brightness(1.4);
+    text-shadow: 0 0 45px #00ffff, 0 0 100px #00ccff;
+  }
+}
+.hyper {
+  color: var(--ai-blue);
+  text-shadow: 0 0 30px #00bfff, 0 0 80px #00e5ff;
+}
+.one {
+  color: #fff;
+  text-shadow: 0 0 20px #00e5ff, 0 0 60px #00bfff;
+}
+
+#tagline {
+  font-size: 1rem;
+  color: var(--ai-blue-soft);
+  margin-bottom: 10px;
+  opacity: 0;
+  animation: tag 6s ease-in-out 1.2s forwards;
+}
+@keyframes tag {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  20%, 75% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+#sub {
+  font-size: 1.2rem;
+  color: var(--ai-blue-soft);
+  opacity: 0.9;
+  letter-spacing: 2px;
+  margin-bottom: 26px;
+}
+
+/* ===== GO Button ===== */
+#goBtn {
+  background: var(--ai-blue);
+  color: #000;
+  border: none;
+  padding: 16px 42px;
+  font-weight: bold;
+  border-radius: 14px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  font-size: 1.2rem;
+  box-shadow: 0 0 40px #00aaff80, inset 0 0 20px var(--ai-blue);
+  position: relative;
+  overflow: hidden;
+  animation: goPulse 3s infinite ease-in-out;
+  transition: all 0.4s ease;
+}
+#goBtn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.85),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: shine 3s infinite linear;
+}
+@keyframes shine {
+  0% {
+    transform: translateX(-100%);
+  }
+  60%, 100% {
+    transform: translateX(100%);
+  }
+}
+@keyframes goPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px #00e0ff60, 0 0 60px #00e5ff20;
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 50px #00ffff, 0 0 100px #00aaff;
+    transform: scale(1.05);
+  }
+}
+#goBtn:hover {
+  transform: scale(1.1);
+  background: #33c7ff;
+}
+
+/* ===== Logs ===== */
+#logs {
+  position: fixed;
+  bottom: 10px;
+  left: 16px;
+  z-index: 7;
+  width: 380px;
+  max-height: 200px;
+  overflow: hidden;
+  font-size: 11px;
+  color: #66d6ff;
+  text-shadow: 0 0 6px var(--ai-blue);
+  opacity: 0.8;
 }
