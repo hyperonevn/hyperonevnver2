@@ -8,7 +8,13 @@ export default function Intro({ onFinish }: { onFinish: () => void }) {
   const [logs, setLogs] = useState<string[]>([]);
   const [active, setActive] = useState(true);
 
-  // ===== Matrix =====
+  // ===== Setup: Lock scroll when intro starts =====
+  useEffect(() => {
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+  }, []);
+
+  // ===== Matrix Rain =====
   useEffect(() => {
     const canvas = matrixRef.current!;
     const ctx = canvas.getContext("2d")!;
@@ -18,9 +24,11 @@ export default function Intro({ onFinish }: { onFinish: () => void }) {
     };
     resize();
     window.addEventListener("resize", resize);
+
     const cols = Math.floor(canvas.width / 14);
     const ypos = Array(cols).fill(0);
     let running = true;
+
     const draw = () => {
       if (!running) return;
       ctx.fillStyle = "rgba(0,0,0,0.08)";
@@ -36,13 +44,14 @@ export default function Intro({ onFinish }: { onFinish: () => void }) {
       requestAnimationFrame(draw);
     };
     draw();
+
     return () => {
       running = false;
       window.removeEventListener("resize", resize);
     };
   }, []);
 
-  // ===== Particles =====
+  // ===== Particle Mist =====
   useEffect(() => {
     const canvas = particlesRef.current!;
     const ctx = canvas.getContext("2d")!;
@@ -52,12 +61,14 @@ export default function Intro({ onFinish }: { onFinish: () => void }) {
     };
     resize();
     window.addEventListener("resize", resize);
+
     const parts = Array.from({ length: 70 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       r: Math.random() * 2 + 0.5,
       s: Math.random() * 0.4 + 0.1,
     }));
+
     let run = true;
     const draw = () => {
       if (!run) return;
@@ -73,6 +84,7 @@ export default function Intro({ onFinish }: { onFinish: () => void }) {
       requestAnimationFrame(draw);
     };
     draw();
+
     return () => {
       run = false;
       window.removeEventListener("resize", resize);
@@ -89,6 +101,7 @@ export default function Intro({ onFinish }: { onFinish: () => void }) {
     };
     resize();
     window.addEventListener("resize", resize);
+
     let meteors: any[] = [];
     const spawn = () => {
       meteors.push({
@@ -103,6 +116,7 @@ export default function Intro({ onFinish }: { onFinish: () => void }) {
         life: 0,
       });
     };
+
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       for (let i = meteors.length - 1; i >= 0; i--) {
@@ -128,7 +142,8 @@ export default function Intro({ onFinish }: { onFinish: () => void }) {
       requestAnimationFrame(draw);
     };
     draw();
-    const interval = setInterval(spawn, 30000);
+
+    const interval = setInterval(spawn, 25000);
     return () => {
       clearInterval(interval);
       window.removeEventListener("resize", resize);
@@ -141,19 +156,26 @@ export default function Intro({ onFinish }: { onFinish: () => void }) {
     const timer = setInterval(() => {
       const t = new Date().toLocaleTimeString();
       setLogs((prev) => [
-        `[${t}] SYS::BOOT OK Δt=${(Math.random() * 0.4 + 0.2).toFixed(3)}s`,
-        ...prev.slice(0, 8),
+        `[${t}] CORE::AUTH OK Δt=${(Math.random() * 0.4 + 0.2).toFixed(3)}s`,
+        ...prev.slice(0, 7),
       ]);
     }, 900);
     return () => clearInterval(timer);
   }, [active]);
 
+  // ===== GO click =====
   const handleGo = () => {
     const goSound = new Audio(
       "https://cdn.pixabay.com/download/audio/2023/03/15/audio_50e1c4c0b0.mp3?filename=ui-confirmation-alert-147389.mp3"
     );
     goSound.play();
     setActive(false);
+
+    // mở scroll lại
+    document.documentElement.style.overflow = "auto";
+    document.body.style.overflow = "auto";
+
+    // Fade out intro
     setTimeout(onFinish, 900);
   };
 
@@ -167,12 +189,12 @@ export default function Intro({ onFinish }: { onFinish: () => void }) {
 
       <div id="terminal">
         <div id="tagline">
-          “We don't chase what AI can do — we pursue what AI should do.”
+          “We don’t chase what AI can do — we pursue what AI should do.”
         </div>
-        <h1>
+        <h1 className="logo">
           <span className="hyper">HYPER</span> <span className="one">ONE</span>
         </h1>
-        <div id="sub">Vietnam's Leading AI Innovation Hub</div>
+        <div id="sub">Vietnam’s Leading AI Innovation Hub</div>
         <button id="goBtn" onClick={handleGo}>
           GO
         </button>
