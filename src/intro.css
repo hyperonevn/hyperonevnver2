@@ -1,0 +1,153 @@
+:root {
+  --ai-blue: #00aaff;
+  --ai-blue-soft: #aee2ff;
+}
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #000;
+  font-family: "Share Tech Mono", monospace;
+  color: #fff;
+  overflow: hidden;
+}
+#intro {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+}
+
+/* Matrix + Particle + Meteor layers */
+#matrix, #particles, #meteors {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+#scan {
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 170, 255, 0.05) 0 2px,
+    transparent 2px 4px
+  );
+  animation: scan 5s linear infinite;
+  pointer-events: none;
+}
+@keyframes scan {
+  from {
+    background-position-y: 0;
+  }
+  to {
+    background-position-y: 100%;
+  }
+}
+#flash {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 255, 255, 0.3),
+    transparent 60%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+/* Terminal center */
+#terminal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  z-index: 5;
+}
+h1 {
+  margin: 0 0 12px;
+  letter-spacing: 4px;
+  font-size: 3rem;
+  text-shadow: 0 0 12px var(--ai-blue), 0 0 30px #0077ff;
+}
+.hyper {
+  color: var(--ai-blue);
+  text-shadow: 0 0 15px var(--ai-blue), 0 0 25px #00ffff;
+}
+.one {
+  color: #fff;
+}
+#sub {
+  font-size: 1rem;
+  color: var(--ai-blue-soft);
+  opacity: 0.95;
+  letter-spacing: 2px;
+  margin-bottom: 26px;
+}
+#tagline {
+  font-size: 0.9rem;
+  color: var(--ai-blue-soft);
+  opacity: 0;
+  margin-bottom: 10px;
+  animation: tag 6s ease-in-out 1.2s forwards;
+}
+@keyframes tag {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  20%, 75% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+/* GO button */
+#goBtn {
+  background: var(--ai-blue);
+  color: #000;
+  border: none;
+  padding: 14px 34px;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-size: 1.1rem;
+  box-shadow: 0 0 20px #00aaff80, inset 0 0 12px var(--ai-blue);
+  animation: glowPulse 2.2s infinite ease-in-out;
+  transition: all 0.35s;
+}
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 12px #00aaff80, 0 0 32px #00aaff40;
+  }
+  50% {
+    box-shadow: 0 0 28px #00e0ff, 0 0 64px #00aaff;
+  }
+}
+#goBtn:hover {
+  background: #33c7ff;
+  transform: scale(1.1);
+}
+
+/* Logs */
+#logs {
+  position: fixed;
+  bottom: 10px;
+  left: 16px;
+  z-index: 7;
+  width: 380px;
+  max-height: 200px;
+  overflow: hidden;
+  font-size: 11px;
+  color: #66d6ff;
+  text-shadow: 0 0 6px var(--ai-blue);
+  opacity: 0.8;
+}
