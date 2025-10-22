@@ -2,23 +2,18 @@
   --ai-blue: #00aaff;
   --ai-blue-soft: #aee2ff;
 }
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  background: #000;
-  font-family: "Share Tech Mono", monospace;
-  color: #fff;
-  overflow: hidden;
-}
+
 #intro {
   position: fixed;
   inset: 0;
   z-index: 999;
+  background: #000;
 }
 
-/* Matrix + Particle + Meteor layers */
-#matrix, #particles, #meteors {
+/* Layers */
+#matrix,
+#particles,
+#meteors {
   position: fixed;
   inset: 0;
   pointer-events: none;
@@ -32,7 +27,6 @@ html, body {
     transparent 2px 4px
   );
   animation: scan 5s linear infinite;
-  pointer-events: none;
 }
 @keyframes scan {
   from {
@@ -42,20 +36,8 @@ html, body {
     background-position-y: 100%;
   }
 }
-#flash {
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(255, 255, 255, 0.3),
-    transparent 60%
-  );
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s ease;
-}
 
-/* Terminal center */
+/* ===== LOGO ===== */
 #terminal {
   position: absolute;
   inset: 0;
@@ -64,33 +46,39 @@ html, body {
   justify-content: center;
   align-items: center;
   text-align: center;
-  z-index: 5;
 }
-h1 {
-  margin: 0 0 12px;
-  letter-spacing: 4px;
-  font-size: 3rem;
-  text-shadow: 0 0 12px var(--ai-blue), 0 0 30px #0077ff;
+.logo {
+  margin: 0;
+  font-size: 4.8rem;
+  letter-spacing: 6px;
+  position: relative;
+  text-shadow: 0 0 30px var(--ai-blue), 0 0 60px #0077ff, 0 0 100px #00ffff80;
+  animation: logoGlow 5s ease-in-out infinite alternate;
+}
+@keyframes logoGlow {
+  0% {
+    filter: brightness(0.9);
+    text-shadow: 0 0 25px #0088ff, 0 0 40px #00ffff60;
+  }
+  100% {
+    filter: brightness(1.4);
+    text-shadow: 0 0 45px #00ffff, 0 0 100px #00ccff;
+  }
 }
 .hyper {
   color: var(--ai-blue);
-  text-shadow: 0 0 15px var(--ai-blue), 0 0 25px #00ffff;
+  text-shadow: 0 0 30px #00bfff, 0 0 80px #00e5ff;
 }
 .one {
   color: #fff;
+  text-shadow: 0 0 20px #00e5ff, 0 0 60px #00bfff;
 }
-#sub {
+
+#tagline {
   font-size: 1rem;
   color: var(--ai-blue-soft);
-  opacity: 0.95;
-  letter-spacing: 2px;
-  margin-bottom: 26px;
-}
-#tagline {
-  font-size: 0.9rem;
-  color: var(--ai-blue-soft);
-  opacity: 0;
   margin-bottom: 10px;
+  opacity: 0;
   animation: tag 6s ease-in-out 1.2s forwards;
 }
 @keyframes tag {
@@ -108,36 +96,69 @@ h1 {
   }
 }
 
-/* GO button */
+#sub {
+  font-size: 1.2rem;
+  color: var(--ai-blue-soft);
+  opacity: 0.9;
+  letter-spacing: 2px;
+  margin-bottom: 26px;
+}
+
+/* ===== GO Button ===== */
 #goBtn {
   background: var(--ai-blue);
   color: #000;
   border: none;
-  padding: 14px 34px;
+  padding: 16px 42px;
   font-weight: bold;
-  border-radius: 10px;
+  border-radius: 14px;
   cursor: pointer;
   text-transform: uppercase;
-  letter-spacing: 3px;
-  font-size: 1.1rem;
-  box-shadow: 0 0 20px #00aaff80, inset 0 0 12px var(--ai-blue);
-  animation: glowPulse 2.2s infinite ease-in-out;
-  transition: all 0.35s;
+  letter-spacing: 4px;
+  font-size: 1.2rem;
+  box-shadow: 0 0 40px #00aaff80, inset 0 0 20px var(--ai-blue);
+  position: relative;
+  overflow: hidden;
+  animation: goPulse 3s infinite ease-in-out;
+  transition: all 0.4s ease;
 }
-@keyframes glowPulse {
+#goBtn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.85),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: shine 3s infinite linear;
+}
+@keyframes shine {
+  0% {
+    transform: translateX(-100%);
+  }
+  60%, 100% {
+    transform: translateX(100%);
+  }
+}
+@keyframes goPulse {
   0%, 100% {
-    box-shadow: 0 0 12px #00aaff80, 0 0 32px #00aaff40;
+    box-shadow: 0 0 20px #00e0ff60, 0 0 60px #00e5ff20;
+    transform: scale(1);
   }
   50% {
-    box-shadow: 0 0 28px #00e0ff, 0 0 64px #00aaff;
+    box-shadow: 0 0 50px #00ffff, 0 0 100px #00aaff;
+    transform: scale(1.05);
   }
 }
 #goBtn:hover {
-  background: #33c7ff;
   transform: scale(1.1);
+  background: #33c7ff;
 }
 
-/* Logs */
+/* ===== Logs ===== */
 #logs {
   position: fixed;
   bottom: 10px;
