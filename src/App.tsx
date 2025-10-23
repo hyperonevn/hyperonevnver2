@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Header } from './components/Header';
 import { Hero } from './components/sections/Hero';
 import { About } from './components/sections/About';
@@ -7,33 +7,14 @@ import { CeoMessage } from './components/sections/CeoMessage';
 import { Services } from './components/sections/Services';
 import { Projects } from './components/sections/Projects';
 import { HyperBot } from './components/sections/HyperBot';
-import { HyperLinks } from './components/sections/HyperLinks';
+import { HyperLinks } from './components/sections/HyperLinks'; // ✅ Mới thêm
 import { Contact } from './components/sections/Contact';
 import { Footer } from './components/Footer';
 import { ContactBar } from './components/ContactBar';
 import { LanguageProvider } from './utils/LanguageContext';
 
 export function App() {
-  const [theme, setTheme] = useState({
-    blue: getComputedStyle(document.documentElement).getPropertyValue('--ai-blue') || '#00aaff',
-    cyan: getComputedStyle(document.documentElement).getPropertyValue('--ai-cyan') || '#00ffff',
-    dark: getComputedStyle(document.documentElement).getPropertyValue('--ai-dark') || '#0f1117',
-  });
-
-  // 👇 Lắng nghe thay đổi biến màu toàn cục (khi Intro thay đổi theme)
-  useEffect(() => {
-    const observer = new MutationObserver(() => {
-      setTheme({
-        blue: getComputedStyle(document.documentElement).getPropertyValue('--ai-blue') || '#00aaff',
-        cyan: getComputedStyle(document.documentElement).getPropertyValue('--ai-cyan') || '#00ffff',
-        dark: getComputedStyle(document.documentElement).getPropertyValue('--ai-dark') || '#0f1117',
-      });
-    });
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['style'] });
-    return () => observer.disconnect();
-  }, []);
-
-  // Add fonts + meta tags (giữ nguyên)
+  // Add fonts and meta tags for SEO
   useEffect(() => {
     const link = document.createElement('link');
     link.href =
@@ -82,14 +63,7 @@ export function App() {
 
   return (
     <LanguageProvider>
-      {/* ✅ Dùng theme màu từ CSS variables */}
-      <div
-        className="min-h-screen font-['Space_Grotesk'] transition-colors duration-500"
-        style={{
-          backgroundColor: theme.dark.trim(),
-          color: theme.cyan.trim(),
-        }}
-      >
+      <div className="bg-[#0f1117] text-white min-h-screen font-['Space_Grotesk']">
         <Header />
         <main>
           <Hero />
@@ -99,7 +73,7 @@ export function App() {
           <Services />
           <Projects />
           <HyperBot />
-          <HyperLinks />
+          <HyperLinks /> {/* ✅ Thêm phần 3 tab mới */}
           <Contact />
         </main>
         <Footer />
